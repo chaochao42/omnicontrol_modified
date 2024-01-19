@@ -1,6 +1,6 @@
 # This code is based on https://github.com/GuyTevet/motion-diffusion-model
 import torch
-
+import numpy as np
 
 def lengths_to_mask(lengths, max_len):
     # max_len = max(lengths)
@@ -64,7 +64,7 @@ def collate(batch):
     
     if 'hint' in notnone_batches[0] and notnone_batches[0]['hint'] is not None:
         hint = [b['hint']for b in notnone_batches]
-        cond['y'].update({'hint': torch.as_tensor(hint)})
+        cond['y'].update({'hint': torch.as_tensor(np.array(hint))})
     
     return motion, cond
 

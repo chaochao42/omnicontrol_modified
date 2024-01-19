@@ -190,10 +190,14 @@ def main():
     os.makedirs(out_path)
 
     npy_path = os.path.join(out_path, 'results.npy')
+    npy_motion_path = os.path.join(out_path, 'results_motion.npy')
     print(f"saving results file to [{npy_path}]")
     np.save(npy_path,
             {'motion': all_motions, 'text': all_text, 'lengths': all_lengths, "hint": all_hint_for_vis,
              'num_samples': args.num_samples, 'num_repetitions': args.num_repetitions})
+    np.save(npy_motion_path,
+            all_motions
+            )
     with open(npy_path.replace('.npy', '.txt'), 'w') as fw:
         fw.write('\n'.join(all_text))
     with open(npy_path.replace('.npy', '_len.txt'), 'w') as fw:
