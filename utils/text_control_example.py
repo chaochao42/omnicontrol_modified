@@ -52,6 +52,47 @@ def unnatural_text_control_example(n_frames=120, raw_mean=None, raw_std=None, in
     control_full = control_full.reshape((len(control), n_frames, -1))
     return text, control_full, joint_id
 
+def walk_pelvis_control_example(n_frames=120, raw_mean=None, raw_std=None, index=0):
+    text = [
+        # pelvis
+        'a person walks',
+    ]
+    control = [
+        # pelvis
+        specify_points(n_frames, 
+                       [
+                           [0, 0.0, 0.7, 0.0], 
+                           [int(n_frames//4), 0.0, 0.7, 1.25],
+                           [int(n_frames//2), 0.0, 0.7, 2.5],
+                           [int(n_frames*3//4), 1.0, 0.7, 2.5],
+                           [n_frames-1, 2, 0.7, 2.5],
+                           ]),
+        # specify_points(50, [[0, 0.0, 0.5, 2.5], [49, 4, 0.5, 2.5]]),
+    ]
+
+    joint_id = np.array([
+        # pelvis 
+        0,
+        ])
+    control = np.stack(control)
+
+    # extend for example 1
+    # control[1, 1:195] = control[1, 1]
+
+    control = control[index:index+1]
+    text = text[index:index+1]
+
+    # normalize
+    control_full = np.zeros((len(control), n_frames, 22, 3)).astype(np.float32)
+    for i in range(len(control)):
+        mask = control[i].sum(-1) != 0
+        control_ = (control[i] - raw_mean.reshape(22, 1, 3)[joint_id[i]]) / raw_std.reshape(22, 1, 3)[joint_id[i]]
+        control_ = control_ * mask[..., np.newaxis]
+        control_full[i, :, joint_id[i], :] = control_
+
+    control_full = control_full.reshape((len(control), n_frames, -1))
+    return text, control_full, joint_id
+
 
 
 def motion_inbetweening(n_frames=120, raw_mean=None, raw_std=None, index=0):
@@ -657,15 +698,18 @@ def collate_all(n_frames, dataset):
     raw_mean = np.load(pjoin(spatial_norm_path, 'Mean_raw.npy'))
     raw_std = np.load(pjoin(spatial_norm_path, 'Std_raw.npy'))
 
-    texts0, hints0, _ = pelvis_dense_text_control_example(n_frames, raw_mean, raw_std, index=0)
-    texts1, hints1, _ = pelvis_sparse_text_control_example(n_frames, raw_mean, raw_std, index=0)
-    texts2, hints2, _ = wrist_text_control_example(n_frames, raw_mean, raw_std, index=0)
-    texts3, hints3, _ = head_text_control_example(n_frames, raw_mean, raw_std, index=0)
-    texts4, hints4, _ = foot_text_control_example(n_frames, raw_mean, raw_std, index=0)
-    # unnatural spatial control signals, e.g. spiral forward or teleportation
-    texts5, hints5, _ = unnatural_text_control_example(n_frames, raw_mean, raw_std, index=0)
-    texts6, hints6, _ = combination_text_control_example(n_frames, raw_mean, raw_std, index=0)
-    texts7, hints7, _ = motion_inbetweening(n_frames, raw_mean, raw_std, index=0)
-    texts = texts0 + texts1 + texts2 + texts3 + texts4 + texts5 + texts6 + texts7
-    hints = np.concatenate([hints0, hints1, hints2, hints3, hints4, hints5, hints6, hints7], axis=0)
+    # texts0, hints0, _ = pelvis_dense_text_control_example(n_frames, raw_mean, raw_std, index=2)
+    # texts1, hints1, _ = pelvis_sparse_text_control_example(n_frames, raw_mean, raw_std, index=0)
+    # texts2, hints2, _ = wrist_text_control_example(n_frames, raw_mean, raw_std, index=0)
+    # texts3, hints3, _ = head_text_control_example(n_frames, raw_mean, raw_std, index=0)
+    # texts4, hints4, _ = foot_text_control_example(n_frames, raw_mean, raw_std, index=0)
+    # # unnatural spatial control signals, e.g. spiral forward or teleportation
+    # texts5, hints5, _ = unnatural_text_control_example(n_frames, raw_mean, raw_std, index=0)
+    # texts6, hints6, _ = combination_text_control_example(n_frames, raw_mean, raw_std, index=0)
+    # texts7, hints7, _ = motion_inbetweening(n_frames, raw_mean, raw_std, index=0)
+    # texts = texts0 + texts1 + texts2 + texts3 + texts4 + texts5 + texts6 + texts7
+    # hints = np.concatenate([hints0, hints1, hints2, hints3, hints4, hints5, hints6, hints7], axis=0)
+    text, hints, _ = walk_pelvis_control_example(n_frames, raw_mean, raw_std, index=0)
+    texts = text
+    hints = np.concatenate([hints], axis=0)
     return texts, hints
