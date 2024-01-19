@@ -196,7 +196,7 @@ def main():
             {'motion': all_motions, 'text': all_text, 'lengths': all_lengths, "hint": all_hint_for_vis,
              'num_samples': args.num_samples, 'num_repetitions': args.num_repetitions})
     np.save(npy_motion_path,
-            all_motions
+            all_motions.transpose((0, 3, 1, 2))
             )
     with open(npy_path.replace('.npy', '.txt'), 'w') as fw:
         fw.write('\n'.join(all_text))
