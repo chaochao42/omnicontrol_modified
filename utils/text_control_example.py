@@ -61,10 +61,10 @@ def walk_pelvis_control_example(n_frames=120, raw_mean=None, raw_std=None, index
         # pelvis
         specify_points(n_frames, 
                        [
-                           [0, 0.0, 0.7, 0.0], 
-                           [int(n_frames//4), 0.0, 0.7, 1.25],
-                           [int(n_frames//2), 0.0, 0.7, 2.5],
-                           [int(n_frames*3//4), 1.0, 0.7, 2.5],
+                           [0, 0.0, 0.9, 0.0], 
+                           [int(n_frames//4), 0.0, 0.9, 1.25],
+                           [int(n_frames//2), 0.0, 0.9, 2.5],
+                           [int(n_frames*3//4), 1.0, 0.9, 2.5],
                            [n_frames-1, 2, 0.7, 2.5],
                            ]),
         # specify_points(50, [[0, 0.0, 0.5, 2.5], [49, 4, 0.5, 2.5]]),
