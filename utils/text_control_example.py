@@ -52,25 +52,38 @@ def unnatural_text_control_example(n_frames=120, raw_mean=None, raw_std=None, in
     control_full = control_full.reshape((len(control), n_frames, -1))
     return text, control_full, joint_id
 
-def generate_trajectory(start, end, num_points):
+
+
+
+def generate_trajectory(segments, num_points):
     # 将输入转换为浮点数列表
-    start = [float(x) for x in start]
-    end = [float(x) for x in end]
-    
-    # 计算每一步的增量
-    delta = [(end[i] - start[i]) / (num_points-1) for i in range(len(start))]
-    
-    # 生成轨迹
+    segments = [[float(x) for x in segment] for segment in segments]
+    len_seg = len(segments)-1
+    point_list = [int(num_points/len_seg) for _ in range(len_seg)]
+
+    if sum(point_list) != num_points:
+        point_list[-1] += num_points - sum(point_list)
+
+    # 生成完整的轨迹
     trajectory = []
-    for i in range(num_points-1):
-        point = [start[j] + i * delta[j] for j in range(len(start))]
-        trajectory.append(point)
-    
-    trajectory.append(end)
+    for i in range(len_seg):
+        num_points_seg = point_list[i]
+        start = segments[i]
+        end = segments[i + 1]
+        delta = [(end[j] - start[j]) / (num_points_seg-1) for j in range(len(start))]
+        for k in range(num_points_seg-1):
+            point = [start[l] + k * delta[l] for l in range(len(start))]
+            trajectory.append(point)
+        trajectory.append(end)
+
     return trajectory
 
 
-def walk_pelvis_control_example(n_frames=120, start=[0, 1.0, 0], end=[0.0, 1.0, 2.5], raw_mean=None, raw_std=None, index=0):
+def walk_pelvis_control_example(n_frames=120, 
+                                segments = [
+                                    []
+                                ],
+                                raw_mean=None, raw_std=None, index=0):
     text = [
         # pelvis
         'a person walks',
@@ -90,8 +103,7 @@ def walk_pelvis_control_example(n_frames=120, start=[0, 1.0, 0], end=[0.0, 1.0, 
     control = [
         # pelvis
         generate_trajectory(
-        start,
-        end,
+        segments,
         n_frames,
         )
     ]
@@ -746,7 +758,17 @@ def collate_all(n_frames, dataset):
     # texts7, hints7, _ = motion_inbetweening(n_frames, raw_mean, raw_std, index=0)
     # texts = texts0 + texts1 + texts2 + texts3 + texts4 + texts5 + texts6 + texts7
     # hints = np.concatenate([hints0, hints1, hints2, hints3, hints4, hints5, hints6, hints7], axis=0)
-    text, hints, _ = walk_pelvis_control_example(n_frames, [0, 1.0, 0], [0.0, 1.0, 2.5], raw_mean, raw_std, index=0)
+    text, hints, _ = walk_pelvis_control_example(n_frames,
+                                                 [
+                                                    [0.0, 1.0, 0.0],
+                                                    [0.0, 1.0, 2.5],
+                                                    [3.0, 1.0, 2.5],
+                                                    [3.0, 1.0, 0.0]
+                                                ],
+                                                raw_mean, 
+                                                raw_std, 
+                                                index=0,
+                                                 )
     texts = text
     hints = np.concatenate([hints], axis=0)
     return texts, hints
