@@ -52,22 +52,48 @@ def unnatural_text_control_example(n_frames=120, raw_mean=None, raw_std=None, in
     control_full = control_full.reshape((len(control), n_frames, -1))
     return text, control_full, joint_id
 
-def walk_pelvis_control_example(n_frames=120, raw_mean=None, raw_std=None, index=0):
+def generate_trajectory(start, end, num_points):
+    # 将输入转换为浮点数列表
+    start = [float(x) for x in start]
+    end = [float(x) for x in end]
+    
+    # 计算每一步的增量
+    delta = [(end[i] - start[i]) / (num_points-1) for i in range(len(start))]
+    
+    # 生成轨迹
+    trajectory = []
+    for i in range(num_points-1):
+        point = [start[j] + i * delta[j] for j in range(len(start))]
+        trajectory.append(point)
+    
+    trajectory.append(end)
+    return trajectory
+
+
+def walk_pelvis_control_example(n_frames=120, start=[0, 1.0, 0], end=[0.0, 1.0, 2.5], raw_mean=None, raw_std=None, index=0):
     text = [
         # pelvis
         'a person walks',
     ]
+    # control = [
+    #     # pelvis
+    #     specify_points(n_frames, 
+    #                    [
+    #                        [0, 0.0, 0.9, 0.0], 
+    #                        [int(n_frames//4), 0.0, 0.9, 1.25],
+    #                        [int(n_frames//2), 0.0, 0.9, 2.5],
+    #                        [int(n_frames*3//4), 1.0, 0.9, 2.5],
+    #                        [n_frames-1, 2, 0.7, 2.5],
+    #                        ]),
+    # ]
+
     control = [
         # pelvis
-        specify_points(n_frames, 
-                       [
-                           [0, 0.0, 0.9, 0.0], 
-                           [int(n_frames//4), 0.0, 0.9, 1.25],
-                           [int(n_frames//2), 0.0, 0.9, 2.5],
-                           [int(n_frames*3//4), 1.0, 0.9, 2.5],
-                           [n_frames-1, 2, 0.7, 2.5],
-                           ]),
-        # specify_points(50, [[0, 0.0, 0.5, 2.5], [49, 4, 0.5, 2.5]]),
+        generate_trajectory(
+        start,
+        end,
+        n_frames,
+        )
     ]
 
     joint_id = np.array([
@@ -471,6 +497,17 @@ def specify_points(n_frames=120, points=[[50, 1, 1, 1]]):
     # hint[:, 2] += z_offset
     return hint
 
+def specify_star_end_point_trajectory(n_frames=120, points=[[50, 1, 1, 1]]):
+    hint = np.zeros((n_frames, 3))
+    for point in points:
+        hint[point[0]] = point[1:]
+    # points = sample_points_forward_uniform(n_frames, scale=scale)
+    # hint[:, indices] = np.array(points)[..., np.newaxis]
+    # hint[:, 0] += x_offset
+    # hint[:, 1] += y_offset
+    # hint[:, 2] += z_offset
+    return hint
+
 
 def spiral_forward(n_frames=120, points=[[50, 1, 1, 1]]):
     hint = np.zeros((n_frames, 3))
@@ -709,7 +746,7 @@ def collate_all(n_frames, dataset):
     # texts7, hints7, _ = motion_inbetweening(n_frames, raw_mean, raw_std, index=0)
     # texts = texts0 + texts1 + texts2 + texts3 + texts4 + texts5 + texts6 + texts7
     # hints = np.concatenate([hints0, hints1, hints2, hints3, hints4, hints5, hints6, hints7], axis=0)
-    text, hints, _ = walk_pelvis_control_example(n_frames, raw_mean, raw_std, index=0)
+    text, hints, _ = walk_pelvis_control_example(n_frames, [0, 1.0, 0], [0.0, 1.0, 2.5], raw_mean, raw_std, index=0)
     texts = text
     hints = np.concatenate([hints], axis=0)
     return texts, hints

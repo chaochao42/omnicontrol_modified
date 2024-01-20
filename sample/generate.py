@@ -30,7 +30,7 @@ def main():
     max_frames = 196 if args.dataset in ['kit', 'humanml'] else 60
     fps = 12.5 if args.dataset == 'kit' else 20
     n_frames = min(max_frames, int(args.motion_length*fps))
-    n_frames = 196
+    n_frames = 100
     is_using_data = not any([args.text_prompt])
     dist_util.setup_dist(args.device)
     if out_path == '':
