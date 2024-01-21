@@ -464,7 +464,7 @@ class GaussianDiffusion:
             else:
                 n_guide_steps = 20
         else:
-            if t[0] < 10:
+            if t[0] < 500:
                 n_guide_steps = 500
             else:
                 n_guide_steps = 10

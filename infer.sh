@@ -4,4 +4,4 @@ python -m sample.generate \
 --text_prompt predefined \
 --output_dir output \
 --cond_mode only_spatial \
---seed 3 
+--seed 2

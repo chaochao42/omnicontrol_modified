@@ -761,9 +761,10 @@ def collate_all(n_frames, dataset):
     text, hints, _ = walk_pelvis_control_example(n_frames,
                                                  [
                                                     [0.0, 1.0, 0.0],
-                                                    [0.0, 1.0, 2.5],
-                                                    [3.0, 1.0, 2.5],
-                                                    [3.0, 1.0, 0.0]
+                                                    [3.1, 1.0, 0.0],
+                                                    [3.1, 1.0, 1.4],
+                                                    [0.0, 1.0, 1.4],
+                                                    [0.0, 1.0, 0.0],
                                                 ],
                                                 raw_mean, 
                                                 raw_std, 
