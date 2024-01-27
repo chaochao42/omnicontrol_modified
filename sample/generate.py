@@ -30,7 +30,7 @@ def main():
     max_frames = 196 if args.dataset in ['kit', 'humanml'] else 60
     fps = 12.5 if args.dataset == 'kit' else 20
     n_frames = min(max_frames, int(args.motion_length*fps))
-    n_frames = 160
+    n_frames = int(args.motion_length)
     is_using_data = not any([args.text_prompt])
     dist_util.setup_dist(args.device)
     if out_path == '':
@@ -125,7 +125,7 @@ def main():
             noise=None,
             const_noise=False,
         )
-
+        raw_sample = sample.clone().detach()
         sample = sample[:, :263]
         # Recover XYZ *positions* from HumanML3D vector representation
         if model.data_rep == 'hml_vec':
@@ -139,6 +139,8 @@ def main():
         sample = model.rot2xyz(x=sample, mask=rot2xyz_mask, pose_rep=rot2xyz_pose_rep, glob=True, translation=True,
                                jointstype='smpl', vertstrans=True, betas=None, beta=0, glob_rot=None,
                                get_rotations_back=False)
+
+
 
         if args.unconstrained:
             all_text += ['unconstrained'] * args.num_samples
@@ -190,14 +192,20 @@ def main():
     os.makedirs(out_path)
 
     npy_path = os.path.join(out_path, 'results.npy')
-    npy_motion_path = os.path.join(out_path, 'results_motion.npy')
+    npy_motion_path = os.path.join(out_path, '000.npy')
     print(f"saving results file to [{npy_path}]")
     np.save(npy_path,
             {'motion': all_motions, 'text': all_text, 'lengths': all_lengths, "hint": all_hint_for_vis,
              'num_samples': args.num_samples, 'num_repetitions': args.num_repetitions})
     np.save(npy_motion_path,
-            all_motions.transpose((0, 3, 1, 2))
+            all_motions.transpose((0, 3, 1, 2))[0]
             )
+    for idx in range(0, raw_sample.shape[0]):
+        single_raw = raw_sample[idx].cpu().numpy()
+        # print(f"+++ single_raw shape: {single_raw.shape}")
+        single_raw_path = os.path.join(out_path, f"sample_raw{str(idx).zfill(3)}.npy")
+        np.save(single_raw_path, single_raw)
+
     with open(npy_path.replace('.npy', '.txt'), 'w') as fw:
         fw.write('\n'.join(all_text))
     with open(npy_path.replace('.npy', '_len.txt'), 'w') as fw:

@@ -760,11 +760,8 @@ def collate_all(n_frames, dataset):
     # hints = np.concatenate([hints0, hints1, hints2, hints3, hints4, hints5, hints6, hints7], axis=0)
     text, hints, _ = walk_pelvis_control_example(n_frames,
                                                  [
-                                                    [0.0, 1.0, 0.0],
-                                                    [3.1, 1.0, 0.0],
-                                                    [3.1, 1.0, 1.4],
-                                                    [0.0, 1.0, 1.4],
-                                                    [0.0, 1.0, 0.0],
+                                                    [0.0, 0.6, 0.0],
+                                                    [0.0, 1.0, 0.1],
                                                 ],
                                                 raw_mean, 
                                                 raw_std, 
