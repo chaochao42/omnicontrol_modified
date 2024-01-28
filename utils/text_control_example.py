@@ -764,11 +764,8 @@ def collate_all(n_frames, dataset):
                                     [
                                         [0.000, 0.45, 0.000],
                                         [0.000, 0.9, 0.000],
-                                        [3.000, 0.9, 0.000],
-                                        [3.000, 0.45, 0.000],
-                                        [3.000, 0.9, 0.000],
-                                        [4.800, 0.9, 0.000],
-                                        [4.800, 0.45, 0.000],
+                                        [0.000, 0.9, 4.000],
+                                        [0.000, 0.45, 4.000],
                                     ],
                                     raw_mean, 
                                     raw_std, 
@@ -785,23 +782,23 @@ def collate_all(n_frames, dataset):
     #                                     index=0,
     #                                     joint_id=10
     #                                     )
-    # text_p2, hints_p2, _ = bbsmog_control(n_frames,
-    #                                     [
-    #                                         [0.01, 0.01, 0.01],
-    #                                         [0.01, 0.01, 0.01],
-    #                                     ],
-    #                                     raw_mean, 
-    #                                     raw_std, 
-    #                                     index=0,
-    #                                     joint_id=11
-    #                                     )
+    text_p2, hints_p2, _ = bbsmog_control(n_frames,
+                                        [
+                                            [0.000, 0.00, 3.800],
+                                            [0.000, 0.00, 3.800],
+                                        ],
+                                        raw_mean, 
+                                        raw_std, 
+                                        index=0,
+                                        joint_id=11
+                                        )
     # nonzero_indices_1 = np.nonzero(hints_p1)[2]
-    # nonzero_indices_2 = np.nonzero(hints_p2)[2]
+    nonzero_indices_2 = np.nonzero(hints_p2)[2]
 
     # for index in nonzero_indices_1:
     #     hints[..., index] = hints_p1[..., index]
-    # for index in nonzero_indices_2:
-    #     hints[..., index] = hints_p2[..., index]
+    for index in nonzero_indices_2[-3:]:
+        hints[..., index] = hints_p2[..., index]
 
     texts = text
     hints = np.concatenate([hints], axis=0)
