@@ -9,8 +9,8 @@ python inference.py \
 --start_position 2.95 0.9 -1.91 \
 --camera_angle -85 0 0 \
 --camera_position 3 10.0 -0.5 \
---path /home/sjtu/Desktop/yuchaowang/OmniControl/output/new \
---video_path /home/sjtu/Desktop/yuchaowang/OmniControl/llm_long/video \
+--path /home/sjtu/Desktop/yuchaowang/OmniControl/output/video2 \
+--video_path /home/sjtu/Desktop/yuchaowang/OmniControl/llm_long/video2 \
 --glb_file_path /home/sjtu/Desktop/yuchaowang/SemanticBoost/glb_files/bedroom_0128.glb
 
 cd /home/sjtu/Desktop/yuchaowang/OmniControl
