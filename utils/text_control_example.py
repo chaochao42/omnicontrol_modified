@@ -79,11 +79,13 @@ def generate_trajectory(segments, num_points):
     return trajectory
 
 
-def walk_pelvis_control_example(n_frames=120, 
+def bbsmog_control(n_frames=120, 
                                 segments = [
                                     []
                                 ],
-                                raw_mean=None, raw_std=None, index=0):
+                                raw_mean=None, raw_std=None, index=0,
+                                joint_id=0,
+                                ):
     text = [
         # pelvis
         'a person walks',
@@ -110,7 +112,7 @@ def walk_pelvis_control_example(n_frames=120,
 
     joint_id = np.array([
         # pelvis 
-        0,
+        joint_id,
         ])
     control = np.stack(control)
 
@@ -758,15 +760,49 @@ def collate_all(n_frames, dataset):
     # texts7, hints7, _ = motion_inbetweening(n_frames, raw_mean, raw_std, index=0)
     # texts = texts0 + texts1 + texts2 + texts3 + texts4 + texts5 + texts6 + texts7
     # hints = np.concatenate([hints0, hints1, hints2, hints3, hints4, hints5, hints6, hints7], axis=0)
-    text, hints, _ = walk_pelvis_control_example(n_frames,
-                                                 [
-                                                    [0.0, 0.6, 0.0],
-                                                    [0.0, 1.0, 0.1],
-                                                ],
-                                                raw_mean, 
-                                                raw_std, 
-                                                index=0,
-                                                 )
+    text, hints, _ = bbsmog_control(n_frames,
+                                    [
+                                        [0.000, 0.45, 0.000],
+                                        [0.000, 0.9, 0.000],
+                                        [3.000, 0.9, 0.000],
+                                        [3.000, 0.45, 0.000],
+                                        [3.000, 0.9, 0.000],
+                                        [5.000, 0.9, 0.000],
+                                        [5.000, 0.45, 0.000],
+                                    ],
+                                    raw_mean, 
+                                    raw_std, 
+                                    index=0,
+                                    joint_id=0
+                                    )
+    # text_p1, hints_p1, _ = bbsmog_control(n_frames,
+    #                                     [
+    #                                         [0.01, 0.01, 0.01],
+    #                                         [0.01, 0.01, 0.01],
+    #                                     ],
+    #                                     raw_mean, 
+    #                                     raw_std, 
+    #                                     index=0,
+    #                                     joint_id=10
+    #                                     )
+    # text_p2, hints_p2, _ = bbsmog_control(n_frames,
+    #                                     [
+    #                                         [0.01, 0.01, 0.01],
+    #                                         [0.01, 0.01, 0.01],
+    #                                     ],
+    #                                     raw_mean, 
+    #                                     raw_std, 
+    #                                     index=0,
+    #                                     joint_id=11
+    #                                     )
+    # nonzero_indices_1 = np.nonzero(hints_p1)[2]
+    # nonzero_indices_2 = np.nonzero(hints_p2)[2]
+
+    # for index in nonzero_indices_1:
+    #     hints[..., index] = hints_p1[..., index]
+    # for index in nonzero_indices_2:
+    #     hints[..., index] = hints_p2[..., index]
+
     texts = text
     hints = np.concatenate([hints], axis=0)
     return texts, hints
