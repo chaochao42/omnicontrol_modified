@@ -762,10 +762,10 @@ def collate_all(n_frames, dataset):
     # hints = np.concatenate([hints0, hints1, hints2, hints3, hints4, hints5, hints6, hints7], axis=0)
     text, hints, _ = bbsmog_control(n_frames,
                                     [
-                                        # [0.000, 0.45, 0.000],
+                                        [0.000, 0.45, 0.000],
                                         [0.000, 0.9, 0.000],
-                                        [-2.20, 0.9, 0.000],
-                                        [-2.20, 0.45, 0.000],
+                                        [3.20, 0.9, 0.000],
+                                        [3.20, 0.45, 0.000],
                                         # [1.050, 0.9, 0.000],
                                         # [4.200, 0.9, 0.000],
                                         # [4.200, 0.45, 0.000],
@@ -777,29 +777,29 @@ def collate_all(n_frames, dataset):
                                     )
     # text_p1, hints_p1, _ = bbsmog_control(n_frames,
     #                                     [
-    #                                         [0.01, 0.01, 0.01],
-    #                                         [0.01, 0.01, 0.01],
-    #                                     ],
-    #                                     raw_mean, 
-    #                                     raw_std, 
-    #                                     index=0,
-    #                                     joint_id=10
-    #                                     )
-    # text_p2, hints_p2, _ = bbsmog_control(n_frames,
-    #                                     [
-    #                                         [0.000, 0.00, 3.800],
-    #                                         [0.000, 0.00, 3.800],
+    #                                         [0.1, 0.00, 0],
+    #                                         [0.1, 0.00, 0],
     #                                     ],
     #                                     raw_mean, 
     #                                     raw_std, 
     #                                     index=0,
     #                                     joint_id=11
     #                                     )
-    # # nonzero_indices_1 = np.nonzero(hints_p1)[2]
+    # text_p2, hints_p2, _ = bbsmog_control(n_frames,
+    #                                     [
+    #                                         [3.1, 0.00, 0],
+    #                                         [3.1, 0.00, 0],
+    #                                     ],
+    #                                     raw_mean, 
+    #                                     raw_std, 
+    #                                     index=0,
+    #                                     joint_id=10
+    #                                     )
+    # nonzero_indices_1 = np.nonzero(hints_p1)[2]
     # nonzero_indices_2 = np.nonzero(hints_p2)[2]
 
-    # # for index in nonzero_indices_1:
-    # #     hints[..., index] = hints_p1[..., index]
+    # for index in nonzero_indices_1[:3]:
+    #     hints[..., index] = hints_p1[..., index]
     # for index in nonzero_indices_2[-3:]:
     #     hints[..., index] = hints_p2[..., index]
 
